@@ -46,3 +46,15 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
+class Post(models.Model):
+    """
+    Modelo de Post para el foro.
+    Para garantizar el anonimato absoluto en BD, guardamos solo el pseudónimo.
+    """
+    author_pseudonym = models.CharField(max_length=100)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Post by {self.author_pseudonym} at {self.created_at}"
