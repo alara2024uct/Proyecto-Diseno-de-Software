@@ -1,0 +1,4 @@
+Django==6.0.5
+psycopg2_binary==2.9.11
+pycryptodome==3.23.0
+requests==2.31.0
