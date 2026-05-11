@@ -78,10 +78,10 @@ WSGI_APPLICATION = 'anihub_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'anihub_db',      # Debe coincidir con el docker-compose
-        'USER': 'postgres',       # Cambiamos a postgres para evitar líos
+        'NAME': 'anihub_db',
+        'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': 'db',             # ¡IMPORTANTE! Debe decir 'db'
+        'HOST': 'db',
         'PORT': '5432',
     }
 }
@@ -133,4 +133,5 @@ AUTH_USER_MODEL = 'anihub_app.CustomUser'
 
 # Clave secreta para AES-256 (Debe ser de exactamente 32 bytes)
 # En producción, asegúrate de inyectarla vía variables de entorno.
-AES_SECRET_KEY = os.environ.get('AES_SECRET_KEY', '12345678901234567890123456789012').encode('utf-8')
+AES_SECRET_KEY = os.environ.get(
+    'AES_SECRET_KEY', '12345678901234567890123456789012').encode('utf-8')
