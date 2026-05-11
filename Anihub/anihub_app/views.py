@@ -10,7 +10,7 @@ from .services.anonymizer import AnonymizerService
 from .models import Post
 
 
-@method_decorator(token_required, name='dispatch')
+#@method_decorator(token_required, name='dispatch')
 class CatalogView(View):
     """FR-1: Vista del catálogo usando Inyección de Dependencias (DIP)"""
 

@@ -21,9 +21,9 @@ class JikanAdapter(AnimeProvider):
             catalog = []
             for anime in data[:10]: # Limitamos a 10 para el ejemplo
                 catalog.append({
-                    "titulo": anime.get("title"),
-                    "sinopsis": anime.get("synopsis", "Sin sinopsis disponible."),
-                    "imagen_url": anime.get("images", {}).get("jpg", {}).get("image_url", "")
+                    "title": anime.get("title"),
+                    "synopsis": anime.get("synopsis", "Sin sinopsis disponible."),
+                    "image_url": anime.get("images", {}).get("jpg", {}).get("image_url", "")
                 })
             return catalog
         except requests.RequestException as e:
