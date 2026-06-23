@@ -11,19 +11,23 @@ services:
 
   web:
     build: .
+    environment: 
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_EMAIL=die12833@gmail.com
+      - DJANGO_SUPERUSER_PASSWORD=1234
+      # - AES_SECRET_KEY=12345678901234567890123456789012 # La que pusiste en settings
     command:
       - /bin/bash
       - -c
       - |
         python manage.py makemigrations
         python manage.py migrate
+        python manage.py createsuperuser --noinput || true
         python manage.py runserver 0.0.0.0:8000
     container_name: django
     volumes:
       - .:/anihub
     ports:
       - "8000:8000"
-    environment:
-      - AES_SECRET_KEY=12345678901234567890123456789012 # La que pusiste en settings
     depends_on:
       - db
