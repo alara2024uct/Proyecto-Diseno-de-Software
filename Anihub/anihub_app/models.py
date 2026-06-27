@@ -8,7 +8,7 @@ class Role(models.Model):
     sin afectar al modelo User directamente.
     """
     ROLE_CHOICES = [
-        ('ANONYMOUS', 'Anónimo'),
+        ('ADMIN', 'Administrador'),
         ('USER', 'Usuario'),
         ('MODERATOR', 'Moderador'),
     ]
