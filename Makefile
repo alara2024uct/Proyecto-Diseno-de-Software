@@ -2,7 +2,7 @@
 # Makefile para administrar el proyecto Anihub con Docker
 # ==============================================================================
 
-.PHONY: run build up down restart logs migrate createsuperuser shell bash test lint format clean help
+.PHONY: run build up down restart logs migrate createsuperuser shell bash test coverage lint format clean help
 
 # Comando por defecto: muestra la ayuda
 .DEFAULT_GOAL := help
@@ -20,6 +20,7 @@ help:
 	@echo "  make shell           Abre el shell interactivo de Django"
 	@echo "  make bash            Entra a la consola (bash) del contenedor web"
 	@echo "  make test            Ejecuta las pruebas unitarias de Django"
+	@echo "  make coverage        Ejecuta las pruebas con cobertura y genera reporte XML"
 	@echo "  make lint            Analiza la calidad del código (linter) usando Ruff"
 	@echo "  make format          Formatea el código automáticamente usando Ruff"
 	@echo "  make clean           Limpia contenedores, redes y volúmenes persistidos"
@@ -67,6 +68,11 @@ bash:
 # Ejecuta los tests de Django
 test:
 	cd Anihub && docker compose exec web python manage.py test
+
+# Ejecuta los tests con cobertura y genera el reporte XML
+coverage:
+	cd Anihub && docker compose exec web coverage run manage.py test
+	cd Anihub && docker compose exec web coverage xml
 
 # Analiza la calidad del código (linter)
 lint:
