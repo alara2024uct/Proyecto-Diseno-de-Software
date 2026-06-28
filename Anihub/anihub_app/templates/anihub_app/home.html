@@ -1,0 +1,40 @@
+{% extends 'anihub_app/base.html' %}
+
+{% block title %}Inicio - AniHub{% endblock %}
+
+{% block content %}
+<div id="section-catalog" class="tab-content">
+    <div class="category-row">
+        <h3>Manga de acción y aventura</h3>
+        <div id="list-manga" class="anime-scroll"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    async function loadCatalog() {
+        try {
+            const response = await fetch('/api/catalog/');
+            const data = await response.json();
+            const mid = Math.ceil(data.catalog.length / 2);
+            renderItems(data.catalog.slice(0, mid), 'list-manga');
+        } catch (e) {
+            const dummy = [{image_url: 'https://cdn.pixabay.com/photo/2023/12/15/15/52/bird-8450958_1280.png'}];
+            renderItems(dummy, 'list-manga');
+        }
+    }
+
+    function renderItems(items, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = items.map(i => `
+            <div class="anime-card" onclick="window.location.href='{% url 'watch_manga' %}'" style="cursor:pointer;">
+                <img src="${i.image_url}" onerror="this.src='https://via.placeholder.com/120x180'">
+            </div>
+        `).join('');
+    }
+
+    loadCatalog();
+</script>
+{% endblock %}

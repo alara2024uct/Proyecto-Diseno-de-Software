@@ -1,0 +1,14 @@
+{% extends 'anihub_app/base.html' %}
+{% block title %}Chat Privado - AniHub{% endblock %}
+{% block content %}
+<div style="padding: 20px;">
+    <h2 style="color: var(--accent);">Sala de Chat</h2>
+    <div style="background: #161640; height: 300px; border-radius: 12px; padding: 15px; overflow-y: auto; margin-bottom: 15px;">
+        <p style="color: var(--accent);"><b>@Sistema:</b> Bienvenido al chat privado encriptado.</p>
+    </div>
+    <div style="display: flex; gap: 10px;">
+        <input type="text" placeholder="Escribe un mensaje..." style="flex-grow: 1; background: #1c1c5e; border: none; padding: 12px; border-radius: 8px; color: white;">
+        <button style="background: #ff0033; color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold;">Enviar</button>
+    </div>
+</div>
+{% endblock %}

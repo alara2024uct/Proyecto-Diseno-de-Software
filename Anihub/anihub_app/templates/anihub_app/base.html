@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AniHub - Shinsoka Edition{% endblock %}</title>
+    <style>
+        :root {
+            --bg-dark: #0a0a32;
+            --bg-card: #1a1a4d;
+            --accent: #ffcc00;
+            --sidebar-bg: #1c1c5e;
+            --primary-red: #ff0033;
+        }
+        body { background-color: var(--bg-dark); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 80px; overflow-x: hidden; }
+        
+        /* Header y Perfil */
+        .header { padding: 15px; display: flex; align-items: center; gap: 10px; position: relative; z-index: 1001; }
+        .search-bar { background: #1c1c5e; border-radius: 25px; padding: 10px 20px; flex-grow: 1; border: none; color: white; }
+        .profile-container { position: relative; cursor: pointer; transition: transform 0.2s ease; }
+        .profile-container:active { transform: scale(1.2); }
+        .profile-img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--accent); display: block; }
+
+        /* Sidebar y Enlaces */
+        .sidebar {
+            position: fixed; top: 0; left: -280px; width: 250px; height: 100%;
+            background: var(--sidebar-bg); box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2000; padding: 80px 20px 20px 20px;
+        }
+        .sidebar.active { left: 0; }
+        
+        .sidebar-link { 
+            text-decoration: none; 
+            color: inherit; 
+            display: block;
+        }
+        .sidebar-item { padding: 15px 10px; font-size: 1.1em; font-weight: bold; color: #ccc; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-item:hover { color: white; background: rgba(255,255,255,0.1); }
+        
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 1500; }
+        .overlay.active { display: block; }
+
+        /* Estilos Comunes de Tarjetas reutilizables */
+        .category-row { padding-left: 15px; margin-bottom: 25px; }
+        .anime-scroll { display: flex; overflow-x: auto; gap: 12px; padding: 10px 0; scrollbar-width: none; }
+        .anime-card { min-width: 120px; height: 180px; background-color: var(--bg-card); border-radius: 10px; overflow: hidden; flex-shrink: 0; }
+        .anime-card img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Navegación Inferior */
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; height: 70px; background: #050520; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #222; z-index: 1000; }
+        .nav-item { font-size: 24px; text-decoration: none; color: white; opacity: 0.5; transition: 0.3s; padding: 10px; display: flex; align-items: center; justify-content: center; }
+        .nav-item.active { opacity: 1; color: var(--primary-red); border: 1px solid var(--primary-red); border-radius: 8px; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
+    
+    <div id="sidebar" class="sidebar">
+        <a href="{% url 'profile' %}" class="sidebar-link"><div class="sidebar-item">Perfil</div></a>
+        <a href="{% url 'chat' %}" class="sidebar-link"><div class="sidebar-item">Chat privado</div></a>
+        <a href="{% url 'favorites' %}" class="sidebar-link"><div class="sidebar-item">Favoritos</div></a>
+        <a href="{% url 'quiz' %}" class="sidebar-link"><div class="sidebar-item">Quiz</div></a>
+        <a href="{% url 'news' %}" class="sidebar-link"><div class="sidebar-item">Noticias anime</div></a>
+    </div>
+
+    <div class="header">
+        <div class="profile-container" onclick="toggleMenu()">
+            <img src="/static/shinsoka_profile.jpg" class="profile-img" alt="Profile"> 
+        </div>
+        <input type="text" class="search-bar" placeholder="Buscar">
+        <span class="bell">🔔</span>
+    </div>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <nav class="nav-bottom">
+        <a href="{% url 'home' %}" id="btn-catalog" class="nav-item {% if request.resolver_match.url_name == 'home' or request.resolver_match.url_name == 'watch_manga' %}active{% endif %}">📖</a>
+        <a href="{% url 'movies' %}" id="btn-movies" class="nav-item {% if request.resolver_match.url_name == 'movies' %}active{% endif %}">🎬</a>
+        <a href="{% url 'forum' %}" id="btn-forum" class="nav-item {% if request.resolver_match.url_name == 'forum' %}active{% endif %}">💬</a>
+    </nav>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

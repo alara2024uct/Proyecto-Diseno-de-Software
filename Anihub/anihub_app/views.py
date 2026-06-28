@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.shortcuts import render
 
 from .auth import token_required
 from .services.anime_adapter import AnimeProvider, JikanAdapter
@@ -53,3 +54,48 @@ class ForumView(View):
             
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+
+# =====================================================================
+# VISTAS PARA EL RENDERIZADO DE PLANTILLAS FRONTEND (HTML)
+# =====================================================================
+
+def login_view(request):
+    """Pantalla de acceso inicial"""
+    return render(request, 'anihub_app/login.html')
+
+def home_view(request):
+    """Catálogo principal de mangas"""
+    return render(request, 'anihub_app/home.html')
+
+def movies_view(request):
+    """Sección de videos y anime"""
+    return render(request, 'anihub_app/movies.html')
+
+def watch_manga_view(request):
+    """Lector individual para tomos de manga"""
+    return render(request, 'anihub_app/watch_manga.html')
+
+def forum_view(request):
+    """Vista pública del foro comunitario"""
+    return render(request, 'anihub_app/forum.html')
+
+def profile_view(request):
+    """Perfil del usuario autenticado"""
+    return render(request, 'anihub_app/profile.html')
+
+def chat_view(request):
+    """Sala de chat privado"""
+    return render(request, 'anihub_app/chat.html')
+
+def favorites_view(request):
+    """Lista de favoritos guardados"""
+    return render(request, 'anihub_app/favorites.html')
+
+def quiz_view(request):
+    """Sección interactiva de trivia y quizzes"""
+    return render(request, 'anihub_app/quiz.html')
+
+def news_view(request):
+    """Noticias de actualidad sobre anime"""
+    return render(request, 'anihub_app/news.html')

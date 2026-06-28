@@ -1,0 +1,12 @@
+{% extends 'anihub_app/base.html' %}
+{% block title %}Mis Favoritos - AniHub{% endblock %}
+{% block content %}
+<div style="padding: 20px;">
+    <h2 style="color: var(--accent);">Mis Favoritos</h2>
+    <p>Lista de tus mangas y animes guardados:</p>
+    <div class="anime-scroll" id="favorites-list">
+        <!-- Tarjeta de ejemplo -->
+        <div class="anime-card"><img src="https://via.placeholder.com/120x180?text=Marcado"></div>
+    </div>
+</div>
+{% endblock %}

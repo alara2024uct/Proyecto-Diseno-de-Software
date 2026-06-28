@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AniHub</title>
+    <style>
+        body { background-color: #0a0a32; color: white; font-family: 'Segoe UI', sans-serif; display: flex; height: 100vh; justify-content: center; align-items: center; margin: 0; }
+        .login-card { background: #1a1a4d; padding: 40px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-align: center; width: 300px; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; background: #1c1c5e; color: white; box-sizing: border-box; }
+        button { background: #ff0033; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; font-size: 1em; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2 style="color: #ffcc00;">AniHub</h2>
+        <form action="{% url 'home' %}" method="GET"> <input type="text" placeholder="Usuario" required>
+            <input type="password" placeholder="Contraseña" required>
+            <button type="submit">Ingresar</button>
+        </form>
+    </div>
+</body>
+</html>
