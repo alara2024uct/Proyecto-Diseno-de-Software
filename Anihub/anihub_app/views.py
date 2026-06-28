@@ -3,12 +3,14 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from .auth import token_required
 from .services.anime_adapter import AnimeProvider, JikanAdapter
 from .services.anonymizer import AnonymizerService
-from .models import Post
+from .models import Post, CustomUser
+from .forms import LoginForm
+from django.contrib.auth import login, logout
 
 @method_decorator(token_required, name='dispatch')
 class CatalogView(View):
@@ -61,8 +63,15 @@ class ForumView(View):
 # =====================================================================
 
 def login_view(request):
-    """Pantalla de acceso inicial"""
-    return render(request, 'anihub_app/login.html')
+    if request.method == 'POST':
+        form = LoginForm(request, data=request.POST)
+        if form.is_valid():
+            usuario = form.get_user()
+            login(request, usuario)
+            return redirect('home')
+    else:
+        form = LoginForm()
+    return render(request, 'anihub_app/login.html', {'form': form})
 
 def home_view(request):
     """Catálogo principal de mangas"""
