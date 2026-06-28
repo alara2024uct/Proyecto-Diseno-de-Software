@@ -4,3 +4,5 @@ pycryptodome==3.23.0
 requests==2.31.0
 djangorestframework
 djangorestframework-simplejwt
+ruff
+coverage
