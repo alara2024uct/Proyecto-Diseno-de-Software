@@ -1,0 +1,37 @@
+# ==============================================================================
+# GitHub Actions - Pipeline ultra veloz de Lint y Format usando Ruff
+# ==============================================================================
+name: Lint & Format Check
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  lint-and-format:
+    name: Run Linter & Formatter
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Ruff
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
+
+      # Apuntamos directamente a 'Anihub/' que es donde está su backend real
+      - name: Run Ruff Linter
+        run: ruff check Anihub/
+
+      # Verifica que el formato esté al día en la carpeta del backend
+      - name: Run Ruff Formatter Check
+        run: ruff format --check Anihub/

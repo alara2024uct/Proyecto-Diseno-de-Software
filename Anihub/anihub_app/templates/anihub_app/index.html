@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,14 +12,52 @@
             --accent: #ffcc00;
             --sidebar-bg: #1c1c5e;
         }
-        body { background-color: var(--bg-dark); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 80px; overflow-x: hidden; }
-        
+
+        body {
+            background-color: var(--bg-dark);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding-bottom: 80px;
+            overflow-x: hidden;
+        }
+
         /* Header y Perfil Animado (image_570a38.png) */
-        .header { padding: 15px; display: flex; align-items: center; gap: 10px; position: relative; z-index: 1001; }
-        .search-bar { background: #1c1c5e; border-radius: 25px; padding: 10px 20px; flex-grow: 1; border: none; color: white; }
-        .profile-container { position: relative; cursor: pointer; transition: transform 0.2s ease; }
-        .profile-container:active { transform: scale(1.2); }
-        .profile-img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--accent); display: block; }
+        .header {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            z-index: 1001;
+        }
+
+        .search-bar {
+            background: #1c1c5e;
+            border-radius: 25px;
+            padding: 10px 20px;
+            flex-grow: 1;
+            border: none;
+            color: white;
+        }
+
+        .profile-container {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .profile-container:active {
+            transform: scale(1.2);
+        }
+
+        .profile-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            display: block;
+        }
 
         /* Sidebar (image_570a38.png) */
         .sidebar {
@@ -28,35 +67,135 @@
             width: 250px;
             height: 100%;
             background: var(--sidebar-bg);
-            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
             transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 2000;
             padding: 80px 20px 20px 20px;
         }
-        .sidebar.active { left: 0; }
-        .sidebar-item { padding: 15px 10px; font-size: 1.1em; font-weight: bold; color: #ccc; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sidebar-item:hover { color: white; background: rgba(255,255,255,0.1); }
 
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 1500; }
-        .overlay.active { display: block; }
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-item {
+            padding: 15px 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #ccc;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-item:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            z-index: 1500;
+        }
+
+        .overlay.active {
+            display: block;
+        }
 
         /* Tarjetas (image_578165.png) */
-        .category-row { padding-left: 15px; margin-bottom: 25px; }
-        .anime-scroll { display: flex; overflow-x: auto; gap: 12px; padding: 10px 0; scrollbar-width: none; }
-        .anime-card { min-width: 120px; height: 180px; background-color: var(--bg-card); border-radius: 10px; overflow: hidden; flex-shrink: 0; }
-        .anime-card img { width: 100%; height: 100%; object-fit: cover; }
+        .category-row {
+            padding-left: 15px;
+            margin-bottom: 25px;
+        }
+
+        .anime-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding: 10px 0;
+            scrollbar-width: none;
+        }
+
+        .anime-card {
+            min-width: 120px;
+            height: 180px;
+            background-color: var(--bg-card);
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .anime-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
         /* Foro (image_576bb1.png) */
-        .post-card { background: var(--bg-card); padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid #ff0033; animation: fadeIn 0.3s; }
-        .post-user { color: var(--accent); font-weight: bold; font-size: 0.85em; display: block; margin-bottom: 5px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .post-card {
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ff0033;
+            animation: fadeIn 0.3s;
+        }
+
+        .post-user {
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 0.85em;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
         /* Navegación Inferior */
-        .nav-bottom { position: fixed; bottom: 0; width: 100%; height: 70px; background: #050520; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #222; z-index: 1000; }
-        .nav-item { font-size: 24px; cursor: pointer; opacity: 0.5; transition: 0.3s; padding: 10px; }
-        .nav-item.active { opacity: 1; color: #ff0033; border: 1px solid #ff0033; border-radius: 8px; }
+        .nav-bottom {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 70px;
+            background: #050520;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #222;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            font-size: 24px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: 0.3s;
+            padding: 10px;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+            color: #ff0033;
+            border: 1px solid #ff0033;
+            border-radius: 8px;
+        }
     </style>
 </head>
+
 <body>
 
     <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
@@ -70,7 +209,7 @@
 
     <div class="header">
         <div class="profile-container" onclick="toggleMenu()">
-            <img src="/static/shinsoka_profile.jpg" class="profile-img"> 
+            <img src="/static/heizou.jpg" class="profile-img">
         </div>
         <input type="text" class="search-bar" placeholder="Buscar">
         <span class="bell">🔔</span>
@@ -93,13 +232,16 @@
     <div id="section-forum" class="tab-content" style="display: none; padding: 20px;">
         <h2 style="color: var(--accent);">Foro de la Comunidad</h2>
         <div style="background: #161640; padding: 15px; border-radius: 15px; margin-bottom: 20px;">
-            <textarea id="post-text" placeholder="¿Qué piensas de Steel Ball Run?" style="width: 100%; background: transparent; color: white; border: none; outline: none; resize: none; font-size: 1em;"></textarea>
+            <textarea id="post-text" placeholder="¿Qué piensas de Steel Ball Run?"
+                style="width: 100%; background: transparent; color: white; border: none; outline: none; resize: none; font-size: 1em;"></textarea>
             <div style="text-align: right; margin-top: 10px;">
-                <button onclick="submitPost()" style="background: #ff0033; color: white; border: none; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold;">Publicar Post</button>
+                <button onclick="submitPost()"
+                    style="background: #ff0033; color: white; border: none; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold;">Publicar
+                    Post</button>
             </div>
         </div>
         <div id="posts-container">
-            </div>
+        </div>
     </div>
 
     <nav class="nav-bottom">
@@ -121,9 +263,9 @@
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
             // Activar la sección y el icono seleccionado
-            if(tabName === 'catalog') document.getElementById('section-catalog').style.display = 'block';
-            if(tabName === 'movies') document.getElementById('section-movies').style.display = 'block';
-            if(tabName === 'forum') document.getElementById('section-forum').style.display = 'block';
+            if (tabName === 'catalog') document.getElementById('section-catalog').style.display = 'block';
+            if (tabName === 'movies') document.getElementById('section-movies').style.display = 'block';
+            if (tabName === 'forum') document.getElementById('section-forum').style.display = 'block';
 
             document.getElementById('btn-' + tabName).classList.add('active');
         }
@@ -132,20 +274,15 @@
             try {
                 const response = await fetch('/api/catalog/');
                 const data = await response.json();
-                
-                // Dividir el catálogo en dos para que las pestañas sean diferentes
-                const mid = Math.ceil(data.catalog.length / 2);
-                const firstHalf = data.catalog.slice(0, mid);
-                const secondHalf = data.catalog.slice(mid);
 
-                renderItems(firstHalf, 'list-manga');
-                renderItems(secondHalf, 'list-movies');
+                if (data.catalog) {
+                    // Dividimos los datos para las dos filas del catálogo
+                    const mid = Math.ceil(data.catalog.length / 2);
+                    renderItems(data.catalog.slice(0, mid), 'list-manga');
+                    renderItems(data.catalog.slice(mid), 'list-movies');
+                }
             } catch (e) {
-                // Datos de prueba con imágenes distintas si la API no carga
-                const dummy1 = [{image_url: 'https://cdn.pixabay.com/photo/2023/12/15/15/52/bird-8450958_1280.png'}];
-                const dummy2 = [{image_url: 'https://cdn.pixabay.com/photo/2024/02/15/15/16/flowers-8575560_1280.jpg'}];
-                renderItems(dummy1, 'list-manga');
-                renderItems(dummy2, 'list-movies');
+                console.error("Error conectando con el servidor Django:", e);
             }
         }
 
@@ -155,23 +292,42 @@
             container.innerHTML = items.map(i => `<div class="anime-card"><img src="${i.image_url}" onerror="this.src='https://via.placeholder.com/120x180'"></div>`).join('');
         }
 
-        function submitPost() {
+        async function submitPost() {
             const textarea = document.getElementById('post-text');
-            const text = textarea.value;
-            if(!text.trim()) return;
+            const content = textarea.value;
+            if (!content.trim()) return;
 
-            const container = document.getElementById('posts-container');
-            const newPost = `
-                <div class="post-card">
-                    <span class="post-user">@Anonimo_Shinsoka</span>
-                    <p style="margin:0;">${text}</p>
-                </div>
-            `;
-            container.innerHTML = newPost + container.innerHTML;
-            textarea.value = '';
+            try {
+                const response = await fetch('/api/forum/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer TU_TOKEN_AQUÍ'
+                    },
+                    body: JSON.stringify({ "content": content })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    const container = document.getElementById('posts-container');
+                    const newPost = `
+                        <div class="post-card">
+                            <span class="post-user">@${result.author}</span>
+                            <p style="margin:0;">${content}</p>
+                        </div>`;
+                    container.insertAdjacentHTML('afterbegin', newPost);
+                    textarea.value = '';
+                } else {
+                    alert("Error al publicar: " + (result.error || "No autorizado"));
+                }
+            } catch (e) {
+                console.error("Error en la petición POST:", e);
+            }
         }
 
         loadData();
     </script>
 </body>
+
 </html>
