@@ -4,6 +4,7 @@ URL configuration for anihub_project project.
 from django.contrib import admin
 from django.urls import path
 from anihub_app import views  # Importación limpia y directa de las vistas de la app
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 urlpatterns = [    
     # -----------------------------------------------------------------
@@ -25,6 +26,7 @@ urlpatterns = [
     # -----------------------------------------------------------------
     # ENDPOINTS DE API REST (BACKEND LOGIC)
     # -----------------------------------------------------------------
+    path('api/auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/catalog/', views.CatalogView.as_view(), name='api_catalog'),
     path('api/forum/post/', views.ForumView.as_view(), name='api_forum_post'),
 ]

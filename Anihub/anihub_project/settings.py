@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'anihub_app',
+    'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -128,10 +130,21 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Define tu modelo de usuario personalizado
+# DATOS PARA DEFINICIÓN DE SESIONES
 AUTH_USER_MODEL = 'anihub_app.CustomUser'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'login'
+
 
 # Clave secreta para AES-256 (Debe ser de exactamente 32 bytes)
 # En producción, asegúrate de inyectarla vía variables de entorno.
 AES_SECRET_KEY = os.environ.get(
     'AES_SECRET_KEY', '12345678901234567890123456789012').encode('utf-8')
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES' : (
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
+    )
+}
