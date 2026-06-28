@@ -1,0 +1,36 @@
+{% extends 'anihub_app/base.html' %}
+
+{% block title %}Multimedia - AniHub{% endblock %}
+
+{% block content %}
+<div id="section-movies" class="tab-content">
+    <div class="category-row">
+        <h3>Animes y Videos de acción</h3>
+        <div id="list-movies" class="anime-scroll"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    async function loadMovies() {
+        try {
+            const response = await fetch('/api/catalog/');
+            const data = await response.json();
+            const mid = Math.ceil(data.catalog.length / 2);
+            renderItems(data.catalog.slice(mid), 'list-movies');
+        } catch (e) {
+            const dummy = [{image_url: 'https://cdn.pixabay.com/photo/2024/02/15/15/16/flowers-8575560_1280.jpg'}];
+            renderItems(dummy, 'list-movies');
+        }
+    }
+
+    function renderItems(items, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = items.map(i => `<div class="anime-card"><img src="${i.image_url}" onerror="this.src='https://via.placeholder.com/120x180'"></div>`).join('');
+    }
+
+    loadMovies();
+</script>
+{% endblock %}
