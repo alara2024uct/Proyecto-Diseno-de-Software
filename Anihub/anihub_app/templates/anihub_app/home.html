@@ -14,8 +14,22 @@
 {% block extra_js %}
 <script>
     async function loadCatalog() {
+        const token = localStorage.getItem('access_token');
+        console.log(token)
+
         try {
-            const response = await fetch('/api/catalog/');
+            const response = await fetch('/api/catalog/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Token ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.status === 401) {
+                throw new Error("Token inválido o expirado")
+            }
+
             const data = await response.json();
             const mid = Math.ceil(data.catalog.length / 2);
             renderItems(data.catalog.slice(0, mid), 'list-manga');

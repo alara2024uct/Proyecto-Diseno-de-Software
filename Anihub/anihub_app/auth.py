@@ -1,8 +1,10 @@
 import json
 import time
+import jwt
 from functools import wraps
 from django.http import JsonResponse
 from .security import AESCipher
+from django.conf import settings
 
 class AuthTokenService:
     """Servicio exclusivo para generar y validar tokens encriptados con AES-256."""
@@ -27,20 +29,25 @@ class AuthTokenService:
             return None # Token inválido
 
 def token_required(view_func):
-    """Decorador para proteger endpoints asegurando la presencia de un token válido."""
-    @wraps(view_func)
-    def _wrapped_view(request, *args, **kwargs):
-        auth_header = request.headers.get('Authorization')
-        if not auth_header or not auth_header.startswith('Bearer '):
-            return JsonResponse({"error": "Token missing or invalid"}, status=401)
+    def wrapper(request, *args, **kwargs):
+        auth_header = request.META.get('HTTP_AUTHORIZATION')
         
-        token = auth_header.split(' ')[1]
-        token_service = AuthTokenService()
-        payload = token_service.validate_token(token)
-        
-        if not payload:
-            return JsonResponse({"error": "Invalid or expired token"}, status=401)
+        # 1. Limpieza del prefijo
+        if auth_header and auth_header.startswith('Token '):
+            token = auth_header.split(' ')[1]
+        else:
+            return JsonResponse({'error': 'Formato inválido'}, status=401)
+
+        try:
+            # 2. INTENTO DE DECODIFICACIÓN
+            # Aquí es donde ocurre el fallo
+            data = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+            return view_func(request, *args, **kwargs)
             
-        request.user_id = payload.get("user_id")
-        return view_func(request, *args, **kwargs)
-    return _wrapped_view
+        except jwt.ExpiredSignatureError:
+            return JsonResponse({'error': 'Token expirado'}, status=401)
+        except jwt.InvalidTokenError:
+            return JsonResponse({'error': 'Token inválido'}, status=401)
+            
+    return wrapper
+    
