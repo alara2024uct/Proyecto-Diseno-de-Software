@@ -29,6 +29,7 @@ jobs:
           pip install ruff django
           pip install djangorestframework djangorestframework-simplejwt
           pip install psycopg
+          pip install Crypto
           # Si más adelante suben un requirements.txt, esto lo instalará automático:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
