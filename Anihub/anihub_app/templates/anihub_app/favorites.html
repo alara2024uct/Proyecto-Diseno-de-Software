@@ -1,12 +1,163 @@
 {% extends 'anihub_app/base.html' %}
 {% block title %}Mis Favoritos - AniHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .favorites-container {
+        padding: 20px;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .favorites-section {
+        background-color: var(--bg-card);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .favorites-title {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #8a8ab0;
+        margin-bottom: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 8px;
+    }
+
+    .media-scroll-grid {
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        padding-bottom: 5px;
+    }
+
+    .media-cover {
+        width: 100px;
+        height: 145px;
+        border-radius: 6px;
+        object-fit: cover;
+    }
+
+    /* Diseño dinámico para el bloque de Foros Favoritos */
+    .saved-forum-item {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 12px;
+        border-left: 3px solid var(--accent);
+        position: relative;
+    }
+
+    .saved-forum-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+
+    .saved-forum-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .saved-forum-user {
+        font-weight: bold;
+        font-size: 0.85em;
+        color: white;
+    }
+
+    .saved-forum-preview {
+        font-size: 0.9em;
+        color: #b0b0d0;
+        margin: 0;
+        line-height: 1.3;
+    }
+
+    .saved-forum-meta {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+        font-size: 0.8em;
+        color: #6a6a90;
+    }
+
+    .no-favorites-message {
+        color: #6a6a90;
+        font-size: 0.95em;
+        font-style: italic;
+        padding: 10px 0;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="padding: 20px;">
-    <h2 style="color: var(--accent);">Mis Favoritos</h2>
-    <p>Lista de tus mangas y animes guardados:</p>
-    <div class="anime-scroll" id="favorites-list">
-        <!-- Tarjeta de ejemplo -->
-        <div class="anime-card"><img src="https://via.placeholder.com/120x180?text=Marcado"></div>
+<div class="favorites-container">
+    <h2 style="color: var(--accent); margin-bottom: 20px; font-size: 1.5em;">Mis Colecciones</h2>
+
+    <!-- Sección: Animes Favoritos -->
+    <div class="favorites-section">
+        <div class="favorites-title">Animes Favoritos (0)</div>
+        <div class="media-scroll-grid"></div>
+    </div>
+
+    <!-- Sección: Mangas Favoritos -->
+    <div class="favorites-section">
+        <div class="favorites-title">Mangas Favoritos (1)</div>
+        <div class="media-scroll-grid">
+            <img src="https://m.media-amazon.com/images/I/8157AZE-b2L._SL1500_.jpg" class="media-cover"
+                alt="Dragon Ball">
+        </div>
+    </div>
+
+    <!-- SECCIÓN SINCRONIZADA: Foros Favoritos -->
+    <div class="favorites-section">
+        <div class="favorites-title" id="forum-title-count">Foros Favoritos (0)</div>
+        <div id="saved-forums-list">
+            <!-- Los posts guardados con la etiqueta dorada se inyectarán aquí automáticamente -->
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const savedListContainer = document.getElementById('saved-forums-list');
+        const titleCount = document.getElementById('forum-title-count');
+
+        // Leer la lista de favoritos guardados en el foro
+        const savedPosts = JSON.parse(localStorage.getItem('savedForumPosts')) || [];
+
+        // Actualizar el número del título dinámicamente
+        titleCount.innerText = `Foros Favoritos (${savedPosts.length})`;
+
+        if (savedPosts.length === 0) {
+            savedListContainer.innerHTML = `<p class="no-favorites-message">No tienes foros guardados con la etiqueta dorada aún.</p>`;
+            return;
+        }
+
+        // Renderizar cada post guardado
+        savedPosts.forEach(post => {
+            const forumItem = document.createElement('div');
+            forumItem.className = 'saved-forum-item';
+            forumItem.innerHTML = `
+                <div class="saved-forum-header">
+                    <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=100" class="saved-forum-avatar" onerror="this.src='/static/shinsoka_profile.jpg'">
+                    <span class="saved-forum-user">${post.username}</span>
+                </div>
+                <p class="saved-forum-preview">${post.caption}</p>
+                <div class="saved-forum-meta">
+                    <span>❤️ ${post.likes}</span>
+                    <span style="color: var(--accent);">★ Guardado</span>
+                </div>
+            `;
+            savedListContainer.appendChild(forumItem);
+        });
+    });
+</script>
 {% endblock %}
