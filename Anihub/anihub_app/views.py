@@ -3,14 +3,12 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 
 from .auth import token_required
 from .services.anime_adapter import AnimeProvider, JikanAdapter
 from .services.anonymizer import AnonymizerService
-from .models import Post, CustomUser, Manga, Anime  # Se añaden Manga y Anime para las consultas locales
-from .forms import LoginForm
-from django.contrib.auth import login, logout
+from .models import Post, Manga  # Se añaden Manga y Anime para las consultas locales
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView

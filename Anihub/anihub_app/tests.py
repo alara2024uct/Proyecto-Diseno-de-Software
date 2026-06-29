@@ -1,4 +1,3 @@
-import json
 import time
 from unittest.mock import patch
 from django.test import TestCase
