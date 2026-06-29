@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - AniHub</title>
+    <style>
+        body {
+            background-color: #0a0a32;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        .register-card {
+            background: #1a1a4d;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 300px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+            background: #1c1c5e;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #ffcc00;
+            color: #0a0a32;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            font-size: 1em;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            background: #ffe066;
+        }
+
+        .back-to-login {
+            display: inline-block;
+            margin-top: 20px;
+            color: #b0b0d0;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+
+        .back-to-login:hover {
+            color: white;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="register-card">
+        <h2 style="color: #ff0033;">Crear Cuenta</h2>
+        <p style="color: #b0b0d0; font-size: 0.9em; margin-bottom: 20px;">Únete a la comunidad de AniHub</p>
+
+        <form id="form-register">
+            {% csrf_token %}
+            <input type="text" id="input-username" placeholder="Nombre de Usuario" required>
+            <input type="email" id="input-email" placeholder="Correo Electrónico" required>
+            <input type="password" id="input-password" placeholder="Contraseña" required>
+            <input type="password" placeholder="Confirmar Contraseña" required>
+            <button type="submit">Registrarme</button>
+        </form>
+
+        <a href="{% url 'login' %}" class="back-to-login">← Volver al inicio de sesión</a>
+    </div>
+
+    <script>
+        document.getElementById('form-register').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('input-username').value;
+            const email = document.getElementById('input-email').value;
+            const password = document.getElementById('input-password').value;
+
+            try {
+                const response = await fetch('http://localhost:8000/api/auth/register/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Si tu configuración de Django pide CSRF, añade esta línea:
+                        // 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                if (response.ok) {
+                    alert("¡Cuenta creada con éxito! Ahora inicia sesión.");
+                    window.location.href = "{% url 'login' %}";
+                } else {
+                    const data = await response.json();
+                    alert("Error: " + JSON.stringify(data));
+                }
+            } catch (error) {
+                alert("Error de conexión con el servidor");
+            }
+        });
+    </script>
+</body>
+
+</html>
