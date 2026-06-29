@@ -14,6 +14,25 @@ jobs:
     name: Run QA & Unit Tests
     runs-on: ubuntu-latest
 
+    # --------------------------------------------------------------------------
+    # CONTENEDORES DE SERVICIO (Levanta Postgres en la máquina virtual de GitHub)
+    # --------------------------------------------------------------------------
+    services:
+      db: # Este nombre crea el host de red 'db', coincidiendo con tu settings.py
+        image: postgres:15
+        env:
+          POSTGRES_DB: anihub_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        # Garantiza que el paso de testing no inicie hasta que Postgres responda
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -32,7 +51,6 @@ jobs:
           pip install pycryptodome
           pip install requests
           pip install coverage
-          # Si más adelante suben un requirements.txt, esto lo instalará automático:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       # 1. Validación de Calidad (Linter)
@@ -40,7 +58,6 @@ jobs:
         run: ruff check Anihub/
 
       # 2. Validación de Estilo (Formatter)
-      # Quitamos el --check para que analice de forma estándar sin frustrar el flujo por estética
       - name: Run Ruff Formatter
         run: ruff format Anihub/
 
