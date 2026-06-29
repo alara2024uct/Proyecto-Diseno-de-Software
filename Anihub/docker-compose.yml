@@ -8,6 +8,8 @@ services:
       - POSTGRES_DB=anihub_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # <-- Mantiene los datos guardados de forma permanente
 
   web:
     build: .
@@ -15,13 +17,14 @@ services:
       - DJANGO_SUPERUSER_USERNAME=admin
       - DJANGO_SUPERUSER_EMAIL=die12833@gmail.com
       - DJANGO_SUPERUSER_PASSWORD=1234
-      # - AES_SECRET_KEY=12345678901234567890123456789012 # La que pusiste en settings
+      # - AES_SECRET_KEY=12345678901234567890123456789012
     command:
       - /bin/bash
       - -c
       - |
         python manage.py makemigrations
         python manage.py migrate
+        python manage.py seed_db  # <-- Inyecta automáticamente los usuarios y publicaciones de prueba
         python manage.py createsuperuser --noinput || true
         python manage.py runserver 0.0.0.0:8000
     container_name: django
@@ -31,3 +34,7 @@ services:
       - "8000:8000"
     depends_on:
       - db
+
+# Declaración del volumen global para PostgreSQL
+volumes:
+  postgres_data:

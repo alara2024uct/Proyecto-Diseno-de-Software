@@ -1,14 +1,85 @@
-{% extends 'anihub_app/base.html' %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ manga.title }} - Lector - AniHub</title>
+    <style>
+        body {
+            background-color: #05051a;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-{% block title %}Leyendo Manga - AniHub{% endblock %}
+        .manga-header {
+            background: #1a1a4d;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-{% block content %}
-<div style="padding: 20px; text-align: center;">
-    <h2 style="color: var(--accent);">Lector de Manga</h2>
-    <p>Visualizador de tomos y capítulos individuales.</p>
-    
-    <div style="max-width: 500px; margin: 20px auto; background: #111; padding: 10px; border-radius: 8px;">
-        <img src="https://via.placeholder.com/400x600?text=Pagina+Del+Manga" style="width: 100%; height: auto;" alt="Manga Page">
+        .manga-header h1 {
+            margin: 0;
+            color: #ffcc00;
+            font-size: 1.8em;
+        }
+
+        /* Contenedor del Lector Vertical */
+        .viewer-container {
+            max-width: 800px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            gap: 15px; /* Espaciado entre hojas del manga */
+        }
+
+        .manga-page {
+            width: 100%;
+            height: auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+            border-radius: 5px;
+            transition: transform 0.2s;
+        }
+
+        .manga-page:hover {
+            transform: scale(1.01); /* Efecto sutil de enfoque al pasar el mouse */
+        }
+
+        .no-pages {
+            padding: 50px;
+            text-align: center;
+            color: #ff0033;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="manga-header">
+        <h1>{{ manga.title }}</h1>
+        <p style="margin: 5px 0 0 0; color: #bbb;">Capítulo Inicial</p>
     </div>
-</div>
-{% endblock %}
+
+    <div class="viewer-container">
+        {% if paginas %}
+            {% for url_pagina in paginas %}
+                <img class="manga-page" src="{{ url_pagina }}" alt="Página {{ forloop.counter }} de {{ manga.title }}" loading="lazy">
+            {% endfor %}
+        {% else %}
+            <div class="no-pages">
+                <h3>Error: No se encontraron páginas disponibles para este manga.</h3>
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>

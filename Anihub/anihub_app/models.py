@@ -41,8 +41,11 @@ class CustomUser(AbstractUser):
     @sensitive_data.setter
     def sensitive_data(self, raw_value):
         """Setter que encripta el dato antes de asignarlo a la variable interna."""
-        cipher_service = AESCipher()
-        self._sensitive_data_encrypted = cipher_service.encrypt(raw_value)
+        if not raw_value:  # MODIFICACIÓN: Evita errores si se pasa None o un string vacío
+            self._sensitive_data_encrypted = None
+        else:
+            cipher_service = AESCipher()
+            self._sensitive_data_encrypted = cipher_service.encrypt(str(raw_value))
 
     def __str__(self):
         return self.username
@@ -58,3 +61,23 @@ class Post(models.Model):
 
     def __str__(self):
         return f"Post by {self.author_pseudonym} at {self.created_at}"
+
+# === NUEVOS MODELOS PARA EL CATÁLOGO LOCAL ===
+
+class Anime(models.Model):
+    title = models.CharField(max_length=255, unique=True)
+    synopsis = models.TextField()
+    image_url = models.URLField()
+    video_url = models.URLField()
+
+    def __str__(self):
+        return self.title
+
+class Manga(models.Model):
+    title = models.CharField(max_length=255, unique=True)
+    synopsis = models.TextField()
+    image_url = models.URLField()
+    pages_urls = models.TextField(help_text="URLs de las páginas separadas por comas")
+
+    def __str__(self):
+        return self.title

@@ -20,7 +20,12 @@
             const mid = Math.ceil(data.catalog.length / 2);
             renderItems(data.catalog.slice(0, mid), 'list-manga');
         } catch (e) {
-            const dummy = [{image_url: 'https://cdn.pixabay.com/photo/2023/12/15/15/52/bird-8450958_1280.png'}];
+            // Datos de respaldo simulados que coinciden con los IDs del Seeder si la API externa falla
+            const dummy = [
+                { id: 1, image_url: 'https://images.justwatch.com/poster/8575005/s332/berserk' },
+                { id: 2, image_url: 'https://covers.openlibrary.org/b/id/12711559-L.jpg' },
+                { id: 3, image_url: 'https://images.justwatch.com/poster/302302324/s332/monster-2004' }
+            ];
             renderItems(dummy, 'list-manga');
         }
     }
@@ -28,11 +33,20 @@
     function renderItems(items, containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
-        container.innerHTML = items.map(i => `
-            <div class="anime-card" onclick="window.location.href='{% url 'watch_manga' %}'" style="cursor:pointer;">
-                <img src="${i.image_url}" onerror="this.src='https://via.placeholder.com/120x180'">
-            </div>
-        `).join('');
+        
+        container.innerHTML = items.map(i => {
+            // Definimos un ID por defecto (1) si el item del catálogo no trae uno explícito
+            const mangaId = i.id || 1;
+            
+            // Construimos la URL dinámica apuntando a la estructura establecida en urls.py (/manga/read/ID/)
+            const targetUrl = `/manga/read/${mangaId}/`;
+
+            return `
+                <div class="anime-card" onclick="window.location.href='${targetUrl}'" style="cursor:pointer;">
+                    <img src="${i.image_url}" onerror="this.src='https://via.placeholder.com/120x180'">
+                </div>
+            `;
+        }).join('');
     }
 
     loadCatalog();

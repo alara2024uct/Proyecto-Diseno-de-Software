@@ -3,12 +3,12 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from .auth import token_required
 from .services.anime_adapter import AnimeProvider, JikanAdapter
 from .services.anonymizer import AnonymizerService
-from .models import Post, CustomUser
+from .models import Post, CustomUser, Manga, Anime  # Se añaden Manga y Anime para las consultas locales
 from .forms import LoginForm
 from django.contrib.auth import login, logout
 from rest_framework import status
@@ -89,9 +89,19 @@ def movies_view(request):
     """Sección de videos y anime"""
     return render(request, 'anihub_app/movies.html')
 
-def watch_manga_view(request):
-    """Lector individual para tomos de manga"""
-    return render(request, 'anihub_app/watch_manga.html')
+def watch_manga_view(request, manga_id):
+    """Lector individual dinámico conectado con la Base de Datos"""
+    # Busca el manga por su ID; si no existe en Postgres, levanta un error 404
+    manga = get_object_or_404(Manga, id=manga_id)
+    
+    # Divide la cadena de texto con comas "url1,url2" en una lista real: ['url1', 'url2']
+    paginas_lista = manga.pages_urls.split(',') if manga.pages_urls else []
+    
+    context = {
+        'manga': manga,
+        'paginas': paginas_lista
+    }
+    return render(request, 'anihub_app/watch_manga.html', context)
 
 def forum_view(request):
     """Vista pública del foro comunitario"""

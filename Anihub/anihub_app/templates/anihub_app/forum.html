@@ -7,6 +7,7 @@
         max-width: 500px;
         margin: 0 auto;
         padding: 15px;
+        position: relative;
     }
 
     /* Caja para crear nueva publicación */
@@ -17,7 +18,6 @@
         margin-bottom: 25px;
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
-
     .create-post-card textarea {
         width: 100%;
         background: #1c1c5e;
@@ -29,20 +29,17 @@
         box-sizing: border-box;
         margin-bottom: 10px;
     }
-
     .create-actions {
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
-
     .upload-btn-wrapper {
         position: relative;
         overflow: hidden;
         display: inline-block;
         cursor: pointer;
     }
-
     .btn-upload {
         border: 1px solid var(--accent);
         color: var(--accent);
@@ -52,7 +49,6 @@
         font-size: 0.85em;
         font-weight: bold;
     }
-
     .upload-btn-wrapper input[type=file] {
         font-size: 100px;
         position: absolute;
@@ -60,7 +56,6 @@
         top: 0;
         opacity: 0;
     }
-
     .btn-publish {
         background: var(--primary-red);
         color: white;
@@ -79,14 +74,13 @@
         margin-bottom: 25px;
         overflow: hidden;
     }
-
     .post-header {
         display: flex;
         align-items: center;
         padding: 12px;
         gap: 10px;
+        position: relative;
     }
-
     .post-user-avatar {
         width: 32px;
         height: 32px;
@@ -94,10 +88,66 @@
         border: 1.5px solid var(--primary-red);
         object-fit: cover;
     }
-
     .post-username {
         font-weight: bold;
         font-size: 0.95em;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+    .post-username:hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Estilo interactivo para los nombres dentro de los comentarios */
+    .comment-author {
+        cursor: pointer;
+        transition: color 0.2s;
+        display: inline-block;
+    }
+    .comment-author:hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Contenedor relativo para poder anidar el menú en cualquier lugar */
+    .user-menu-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    /* Menú flotante para agregar amigos */
+    .user-actions-menu {
+        display: none;
+        position: absolute;
+        top: 20px;
+        left: 0;
+        background: #11113a;
+        border: 1px solid var(--accent);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        z-index: 100;
+        overflow: hidden;
+    }
+    /* Ajuste específico para el menú del header */
+    .post-header .user-actions-menu {
+        top: 35px;
+        left: 45px;
+    }
+    .user-actions-menu button {
+        background: transparent;
+        border: none;
+        color: white;
+        padding: 10px 15px;
+        font-size: 0.85em;
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+        white-space: nowrap;
+        transition: background 0.2s;
+    }
+    .user-actions-menu button:hover {
+        background: rgba(255, 255, 255, 0.1);
     }
 
     .post-image-container {
@@ -107,7 +157,6 @@
         align-items: center;
         justify-content: center;
     }
-
     .post-main-image {
         width: 100%;
         height: auto;
@@ -122,22 +171,17 @@
         padding: 12px 12px 6px 12px;
         font-size: 1.4em;
     }
-
     .action-icon {
         cursor: pointer;
         transition: transform 0.1s ease;
         user-select: none;
     }
-
     .action-icon:active {
         transform: scale(1.3);
     }
-
     .action-icon.liked {
         filter: drop-shadow(0 0 4px var(--primary-red));
     }
-
-    /* Estilo amarillo brillante para el marcador guardado */
     .action-icon.saved {
         color: var(--accent);
         filter: drop-shadow(0 0 6px var(--accent));
@@ -147,25 +191,21 @@
         padding: 0 12px 12px 12px;
         font-size: 0.95em;
     }
-
     .likes-count {
         font-weight: bold;
         margin-bottom: 6px;
         display: block;
     }
-
     .post-caption {
         margin: 4px 0;
         line-height: 1.4;
     }
-
     .post-caption b {
         margin-right: 6px;
     }
 
-    /* Oculto por defecto para desplegarse dinámicamente */
     .comments-section-wrapper {
-        display: none;
+        display: none; 
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         background: rgba(0, 0, 0, 0.15);
     }
@@ -175,9 +215,8 @@
         max-height: 160px;
         overflow-y: auto;
     }
-
     .comment-item {
-        margin: 5px 0;
+        margin: 8px 0;
         font-size: 0.9em;
         line-height: 1.3;
     }
@@ -188,7 +227,6 @@
         padding: 8px 12px;
         align-items: center;
     }
-
     .comment-input {
         flex-grow: 1;
         background: transparent;
@@ -197,7 +235,6 @@
         font-size: 0.9em;
         outline: none;
     }
-
     .comment-submit-btn {
         background: transparent;
         border: none;
@@ -227,22 +264,23 @@
     <!-- Contenedor del Feed de Publicaciones -->
     <div id="feed-container">
 
-        <!-- Publicación Original Restaurada Correctamente -->
+        <!-- Publicación Original -->
         <div class="instagram-post">
             <div class="post-header">
-                <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=100"
-                    class="post-user-avatar" alt="Avatar">
-                <span class="post-username">TheBoss</span>
+                <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=100" class="post-user-avatar" id="avatar-theboss" alt="Avatar">
+                <span class="post-username" onclick="toggleUserMenu(this)">TheBoss</span>
+                
+                <div class="user-actions-menu">
+                    <button onclick="addFriendFromPost('TheBoss', 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=100')">👤 Agregar a amigos</button>
+                </div>
             </div>
             <div class="post-image-container">
-                <img src="https://static0.gamerantimages.com/wordpress/wp-content/uploads/2023/08/sukuna-vs-gojo-wheel-turns-jujutsu-kaisen-232.jpg"
-                    class="post-main-image" alt="Post Image">
+                <img src="https://static0.gamerantimages.com/wordpress/wp-content/uploads/2023/08/sukuna-vs-gojo-wheel-turns-jujutsu-kaisen-232.jpg" class="post-main-image" alt="Post Image">
             </div>
             <div class="post-actions-bar">
                 <span class="action-icon" data-liked="false" data-base-likes="2875" onclick="toggleLike(this)">🤍</span>
                 <span class="action-icon" onclick="toggleComments(this)">💬</span>
-                <!-- Marcador de favoritos interactivo incorporado -->
-                <span class="action-icon" data-saved="false" onclick="toggleSave(this)">🔖</span>
+                <span class="action-icon" data-saved="false" data-post-id="post_theboss" onclick="toggleSave(this)">🔖</span>
             </div>
             <div class="post-body">
                 <span class="likes-count">2,875 Me gusta</span>
@@ -251,8 +289,26 @@
 
             <div class="comments-section-wrapper">
                 <div class="comments-box">
-                    <div class="comment-item"><b>otaku_chile</b> Gojo era mas fuerte que Sukuna!</div>
-                    <div class="comment-item"><b>shinsoka</b> ¿Qué anime es? 👀</div>
+                    <!-- Comentarios con menús interactivos encapsulados de forma modular -->
+                    <div class="comment-item">
+                        <div class="user-menu-wrapper">
+                            <b class="comment-author" onclick="toggleUserMenu(this)">otaku_chile</b>
+                            <div class="user-actions-menu">
+                                <button onclick="addFriendFromPost('otaku_chile', 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=100')">👤 Agregar a amigos</button>
+                            </div>
+                        </div>
+                        Gojo era mas fuerte que Sukuna!
+                    </div>
+
+                    <div class="comment-item">
+                        <div class="user-menu-wrapper">
+                            <b class="comment-author" onclick="toggleUserMenu(this)">shinsoka</b>
+                            <div class="user-actions-menu">
+                                <button disabled style="color: #666;">Es tu propio perfil</button>
+                            </div>
+                        </div>
+                        ¿Qué anime es? 👀
+                    </div>
                 </div>
                 <div class="add-comment-container">
                     <input type="text" class="comment-input" placeholder="Añadir un comentario...">
@@ -270,12 +326,11 @@
 <script>
     let selectedImageBase64 = null;
 
-    // Lector de archivos para fotos nuevas
-    document.getElementById('new-post-file').addEventListener('change', function (event) {
+    document.getElementById('new-post-file').addEventListener('change', function(event) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = function (e) {
+            reader.onload = function(e) {
                 selectedImageBase64 = e.target.result;
                 document.querySelector('.btn-upload').innerText = "✓ Foto Cargada";
                 document.querySelector('.btn-upload').style.borderColor = "#00aa50";
@@ -285,8 +340,7 @@
         }
     });
 
-    // Al cargar la página del foro, verificamos qué posts ya estaban guardados para pintarlos de amarillo
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const savedPosts = JSON.parse(localStorage.getItem('savedForumPosts')) || [];
         document.querySelectorAll('.action-icon[data-saved]').forEach(element => {
             const postId = element.getAttribute('data-post-id');
@@ -297,39 +351,67 @@
         });
     });
 
-    // SISTEMA DE FAVORITOS REAL (Sincronizado con LocalStorage)
+    // Controlar visibilidad de menús de usuario (Tanto en cabecera como en comentarios)
+    function toggleUserMenu(element) {
+        const menu = element.nextElementSibling;
+        const isVisible = menu.style.display === "block";
+        
+        // Cerrar absolutamente todos los menús abiertos para evitar solapamientos
+        document.querySelectorAll('.user-actions-menu').forEach(m => m.style.display = 'none');
+        
+        menu.style.display = isVisible ? "none" : "block";
+    }
+
+    // Cerrar menús al hacer clic fuera de ellos de manera global
+    document.addEventListener('click', function(e) {
+        if (!e.target.classList.contains('post-username') && !e.target.classList.contains('comment-author')) {
+            document.querySelectorAll('.user-actions-menu').forEach(m => m.style.display = 'none');
+        }
+    });
+
+    function addFriendFromPost(username, avatarUrl) {
+        let currentFriends = JSON.parse(localStorage.getItem('profileFriendsList'));
+        
+        if (!currentFriends) {
+            currentFriends = [
+                { name: "TheBoss", avatar: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=100" },
+                { name: "otaku_chile", avatar: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=100" }
+            ];
+        }
+
+        if (currentFriends.some(f => f.name === username)) {
+            alert(`Ya eres amigo de ${username}`);
+            return;
+        }
+
+        currentFriends.push({ name: username, avatar: avatarUrl });
+        localStorage.setItem('profileFriendsList', JSON.stringify(currentFriends));
+        alert(`${username} fue agregado a tus amigos.`);
+    }
+
     function toggleSave(element) {
         const isSaved = element.getAttribute('data-saved') === 'true';
         const postId = element.getAttribute('data-post-id');
-
-        // Obtener los datos del post actual
+        
         const postCard = element.closest('.instagram-post');
         const username = postCard.querySelector('.post-username').innerText;
         const caption = postCard.querySelector('.post-caption').innerHTML;
         const likes = postCard.querySelector('.likes-count').innerText;
 
         let savedPosts = JSON.parse(localStorage.getItem('savedForumPosts')) || [];
-
+        
         if (!isSaved) {
-            // Guardar en favoritos
             element.setAttribute('data-saved', 'true');
             element.classList.add('saved');
-
-            // Estructura del post que pasaremos a la otra vista
             const postData = { id: postId, username: username, caption: caption, likes: likes };
             savedPosts.push(postData);
         } else {
-            // Quitar de favoritos
             element.setAttribute('data-saved', 'false');
             element.classList.remove('saved');
-
-            // Eliminar de la lista
             savedPosts = savedPosts.filter(post => post.id !== postId);
         }
-
-        // Guardar cambios en la memoria del navegador
+        
         localStorage.setItem('savedForumPosts', JSON.stringify(savedPosts));
-
         element.style.transform = "scale(1.3)";
         setTimeout(() => element.style.transform = "scale(1)", 100);
     }
@@ -358,7 +440,7 @@
     function toggleComments(element) {
         const post = element.closest('.instagram-post');
         const wrapper = post.querySelector('.comments-section-wrapper');
-
+        
         if (wrapper.style.display === "none" || wrapper.style.display === "") {
             wrapper.style.display = "block";
             wrapper.querySelector('.comment-input').focus();
@@ -370,12 +452,22 @@
     function postComment(button) {
         const input = button.previousElementSibling;
         const commentText = input.value.trim();
-
+        
         if (commentText !== "") {
             const commentsBox = button.closest('.instagram-post').querySelector('.comments-box');
             const newComment = document.createElement('div');
             newComment.className = 'comment-item';
-            newComment.innerHTML = `<b>Tú</b> ${commentText}`;
+            
+            // Los nuevos comentarios que publiques tú también adoptarán la estructura de menú modular deshabilitada
+            newComment.innerHTML = `
+                <div class="user-menu-wrapper">
+                    <b class="comment-author" onclick="toggleUserMenu(this)">Tú</b>
+                    <div class="user-actions-menu">
+                        <button disabled style="color: #666;">Es tu propio perfil</button>
+                    </div>
+                </div> 
+                ${commentText}
+            `;
             commentsBox.appendChild(newComment);
             input.value = "";
             commentsBox.scrollTop = commentsBox.scrollHeight;
@@ -385,15 +477,15 @@
     function addNewPost() {
         const textInput = document.getElementById('new-post-text');
         const text = textInput.value.trim();
-
+        
         if (text === "" && !selectedImageBase64) {
             alert("Por favor, escribe algo o selecciona una foto antes de publicar.");
             return;
         }
 
         const feed = document.getElementById('feed-container');
-        const uniqueId = "post_" + Date.now(); // ID único para poder guardar este post nuevo si se desea
-
+        const uniqueId = "post_" + Date.now();
+        
         let imageHtml = "";
         if (selectedImageBase64) {
             imageHtml = `
@@ -407,7 +499,10 @@
             <div class="instagram-post">
                 <div class="post-header">
                     <img src="/static/shinsoka_profile.jpg" class="post-user-avatar" alt="Avatar" onerror="this.src='https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=100'">
-                    <span class="post-username">Shinsoka (Tú)</span>
+                    <span class="post-username" onclick="toggleUserMenu(this)">Shinsoka (Tú)</span>
+                    <div class="user-actions-menu">
+                        <button disabled style="color: #666;">Es tu propio perfil</button>
+                    </div>
                 </div>
                 
                 ${imageHtml}
@@ -431,12 +526,12 @@
                 </div>
             </div>
         `;
-
+        
         feed.insertAdjacentHTML('afterbegin', newPostHtml);
         textInput.value = "";
         selectedImageBase64 = null;
         document.getElementById('new-post-file').value = "";
-
+        
         document.querySelector('.btn-upload').innerText = "📷 Añadir Foto";
         document.querySelector('.btn-upload').style.borderColor = "var(--accent)";
         document.querySelector('.btn-upload').style.color = "var(--accent)";

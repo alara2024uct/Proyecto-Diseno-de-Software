@@ -1,12 +1,265 @@
 {% extends 'anihub_app/base.html' %}
 {% block title %}Trivia Quiz - AniHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .quiz-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .quiz-card {
+        background: var(--bg-card);
+        padding: 25px;
+        border-radius: 12px;
+        margin-top: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+    .quiz-progress {
+        font-size: 0.9em;
+        color: #8a8ab0;
+        margin-bottom: 10px;
+        text-align: right;
+    }
+    .quiz-question {
+        font-size: 1.2em;
+        color: white;
+        margin-bottom: 20px;
+    }
+    .option-btn {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: #1c1c5e;
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 14px;
+        margin: 10px 0;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background 0.2s ease, transform 0.1s ease;
+    }
+    .option-btn:hover:not([disabled]) {
+        background: #2a2a7a;
+        transform: translateX(4px);
+    }
+    .option-btn[disabled] {
+        cursor: not-down;
+    }
+    /* Estados de respuesta */
+    .option-btn.correct {
+        background: #1e6f47 !important;
+        border-color: #2ecc71;
+    }
+    .option-btn.incorrect {
+        background: #8b2525 !important;
+        border-color: #e74c3c;
+    }
+    /* Pantalla de Resultados */
+    .results-screen {
+        text-align: center;
+        padding: 20px 0;
+    }
+    .score-badge {
+        font-size: 3em;
+        font-weight: bold;
+        color: var(--accent);
+        margin: 20px 0;
+    }
+    .btn-restart {
+        background: var(--accent);
+        color: #0b0b26;
+        border: none;
+        padding: 12px 25px;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1em;
+        margin-top: 15px;
+    }
+    .btn-restart:hover {
+        opacity: 0.9;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="padding: 20px;">
-    <h2 style="color: var(--accent);">Trivia Anime</h2>
-    <div style="background: var(--bg-card); padding: 20px; border-radius: 12px; margin-top: 20px;">
-        <h3>¿Quién es el creador de Steel Ball Run?</h3>
-        <button style="display: block; width: 100%; text-align: left; background: #1c1c5e; color: white; border: none; padding: 12px; margin: 10px 0; border-radius: 8px; cursor: pointer;">A) Eiichiro Oda</button>
-        <button style="display: block; width: 100%; text-align: left; background: #1c1c5e; color: white; border: none; padding: 12px; margin: 10px 0; border-radius: 8px; cursor: pointer;">B) Hirohiko Araki</button>
+<div class="quiz-container">
+    <h2 style="color: var(--accent); margin: 0;">Trivia Anime</h2>
+    
+    <div class="quiz-card" id="quiz-box">
+        <!-- El contenido se genera dinámicamente con JS -->
+        <div class="quiz-progress" id="progress-text">Pregunta 0 de 10</div>
+        <div class="quiz-question" id="question-text">Cargando pregunta...</div>
+        <div id="options-container">
+            <!-- Botones de opciones -->
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 1. Banco completo de preguntas disponibles
+    const totalQuestionsBank = [
+        {
+            q: "¿Quién es el creador del manga 'Steel Ball Run' (Jojo's Part 7)?",
+            options: ["Eiichiro Oda", "Hirohiko Araki", "Hajime Isayama", "Masashi Kishimoto"],
+            correct: 1
+        },
+        {
+            q: "¿Cuál es el estudio de animación encargado de 'Attack on Titan' desde la Temporada Final?",
+            options: ["Wit Studio", "ufotable", "MAPPA", "Madhouse"],
+            correct: 2
+        },
+        {
+            q: "¿Cómo se llama el arma icónica de la cazadora de demonios Shinobu Kocho en Demon Slayer?",
+            options: ["Espada Nichirin normal", "Espada Aguijón de Insecto", "Katana de Hielo", "Guadaña de Sangre"],
+            correct: 1
+        },
+        {
+            q: "En 'Jujutsu Kaisen', ¿cuántos dedos en total debe consumir Yuji Itadori para sellar por completo a Sukuna?",
+            options: ["10 dedos", "15 dedos", "20 dedos", "25 dedos"],
+            correct: 2
+        },
+        {
+            q: "¿Cuál es el nombre del protagonista principal del anime 'Hunter x Hunter'?",
+            options: ["Killua Zoldyck", "Kurapika", "Leorio", "Gon Freecss"],
+            correct: 3
+        },
+        {
+            q: "¿Cuál de los siguientes Pokémon es de tipo Tierra puro y evoluciona de Sandile?",
+            options: ["Krokorok", "Krookodile", "Tyranitar", "Sceptile"],
+            correct: 0
+        },
+        {
+            q: "En 'One Piece', ¿cuál es la Fruta del Diablo que consumió Portgas D. Ace?",
+            options: ["Gomu Gomu no Mi", "Mera Mera no Mi", "Goro Goro no Mi", "Yami Yami no Mi"],
+            correct: 1
+        },
+        {
+            q: "¿Qué tipo de arma es la especialidad absoluta del cazador en Monster Hunter para hacer contrataques precisos usando viales?",
+            options: ["Gran Espada", "Espada Larga", "Hacha Espada", "Hacha Cargada (Charge Blade)"],
+            correct: 3
+        },
+        {
+            q: "¿Cuál es la aldea ninja de procedencia de Naruto Uzumaki?",
+            options: ["Aldea de la Arena", "Aldea de la Hoja", "Aldea de la Niebla", "Aldea de las Nubes"],
+            correct: 1
+        },
+        {
+            q: "En 'Neon Genesis Evangelion', ¿cómo se llama la piloto designada para el EVA-02?",
+            options: ["Rei Ayanami", "Asuka Langley", "Misato Katsuragi", "Mari Illustrious"],
+            correct: 1
+        },
+        {
+            q: "¿Cuál es el nombre del alquimista estatal protagonista en 'Fullmetal Alchemist'?",
+            options: ["Roy Mustang", "Alphonse Elric", "Edward Elric", "Van Hohenheim"],
+            correct: 2
+        },
+        {
+            q: "¿Quién es el Dios de la Muerte (Shinigami) que acompaña a Light Yagami en 'Death Note'?",
+            options: ["Rem", "Ryuk", "Sidoh", "Jealous"],
+            correct: 1
+        }
+    ];
+
+    // Variables de control de la partida actual
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    // Inicializar o reiniciar juego
+    function startQuiz() {
+        score = 0;
+        currentQuestionIndex = 0;
+        
+        // Mezclar el banco completo y elegir exactamente 10 preguntas al azar
+        currentQuestions = [...totalQuestionsBank]
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 10);
+            
+        showQuestion();
+    }
+
+    // Renderizar la pregunta en pantalla
+    function showQuestion() {
+        const quizBox = document.getElementById('quiz-box');
+        const progressText = document.getElementById('progress-text');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+
+        // Limpiar opciones anteriores
+        optionsContainer.innerHTML = "";
+
+        const currentQ = currentQuestions[currentQuestionIndex];
+        
+        // Actualizar textos
+        progressText.innerText = `Pregunta ${currentQuestionIndex + 1} de 10`;
+        questionText.innerText = currentQ.q;
+
+        // Generar botones de las opciones de respuesta
+        currentQ.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.className = 'option-btn';
+            button.innerText = option;
+            button.onclick = () => checkAnswer(index, button);
+            optionsContainer.appendChild(button);
+        });
+    }
+
+    // Validar si la respuesta seleccionada es la correcta
+    function checkAnswer(selectedIndex, clickedButton) {
+        const currentQ = currentQuestions[currentQuestionIndex];
+        const allButtons = document.querySelectorAll('.option-btn');
+
+        // Deshabilitar todos los botones para que no se pueda cambiar de respuesta
+        allButtons.forEach(btn => btn.disabled = true);
+
+        if (selectedIndex === currentQ.correct) {
+            clickedButton.classList.add('correct');
+            score++;
+        } else {
+            clickedButton.classList.add('incorrect');
+            // Resaltar en verde cuál era la correcta por feedback al usuario
+            allButtons[currentQ.correct].classList.add('correct');
+        }
+
+        // Esperar 1.5 segundos para mostrar el resultado visual y pasar a la siguiente
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < 10) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }, 1500);
+    }
+
+    // Mostrar pantalla final con el puntaje acumulado
+    function showResults() {
+        const quizBox = document.getElementById('quiz-box');
+        
+        let feedbackMessage = "";
+        if (score === 10) feedbackMessage = "¡Perfecto! Eres un maestro otaku indiscutible. 👑";
+        else if (score >= 7) feedbackMessage = "¡Excelente puntuación! Sabes mucho de anime. 🔥";
+        else if (score >= 4) feedbackMessage = "Buen intento, pero aún te falta ver más variedad. 👀";
+        else feedbackMessage = "¡Uy! Necesitas maratonear urgentemente. 💀";
+
+        quizBox.innerHTML = `
+            <div class="results-screen">
+                <h3 style="color: white; margin: 0;">¡Trivia Terminada!</h3>
+                <p style="color: #8a8ab0; font-size: 0.95em; margin-top: 5px;">Este fue tu rendimiento:</p>
+                <div class="score-badge">${score} / 10</div>
+                <p style="color: white; font-size: 1.1em; padding: 0 15px;">${feedbackMessage}</p>
+                <button class="btn-restart" onclick="location.reload()">Volver a jugar</button>
+            </div>
+        `;
+    }
+
+    // Ejecutar la trivia de inmediato al cargar la página
+    document.addEventListener('DOMContentLoaded', startQuiz);
+</script>
 {% endblock %}

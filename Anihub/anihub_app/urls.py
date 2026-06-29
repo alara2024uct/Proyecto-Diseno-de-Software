@@ -9,16 +9,24 @@ from .views import RegisterView
 
 urlpatterns = [    
     # -----------------------------------------------------------------
+    # PANEL DE ADMINISTRACIÓN DE DJANGO
+    # -----------------------------------------------------------------
+    path('admin/', admin.site.urls),
+
+    # -----------------------------------------------------------------
     # RUTAS DE INTERFAZ (FRONTEND MODULAR)
     # -----------------------------------------------------------------
     path('', views.login_view, name='login'),
     path('register/', views.register_view, name='register'),
     path('home/', views.home_view, name='home'),
     path('movies/', views.movies_view, name='movies'),
-    path('manga/read/', views.watch_manga_view, name='watch_manga'),
+    
+    # MODIFICACIÓN: Ruta dinámica para capturar el ID del manga en el visor
+    path('manga/read/<int:manga_id>/', views.watch_manga_view, name='watch_manga'),
+    
     path('forum/', views.forum_view, name='forum'),
     
-    # Nuevas rutas añadidas para el menú lateral (Sidebar)
+    # Rutas añadidas para el menú lateral (Sidebar)
     path('profile/', views.profile_view, name='profile'),
     path('chat/', views.chat_view, name='chat'),
     path('favorites/', views.favorites_view, name='favorites'),

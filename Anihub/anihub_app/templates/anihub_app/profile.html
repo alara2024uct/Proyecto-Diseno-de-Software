@@ -56,8 +56,16 @@
         font-size: 0.9em;
         color: #8a8ab0;
     }
+    .stat-link {
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+    .stat-link:hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
 
-    /* Secciones de Favoritos idénticas a la captura */
+    /* Secciones de Favoritos */
     .favorites-section {
         background-color: var(--bg-card);
         border-radius: 8px;
@@ -83,7 +91,7 @@
         box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
 
-    /* Modal o Formulario de edición oculto por defecto */
+    /* Formulario de edición */
     .edit-form-container {
         display: none;
         background: #11113a;
@@ -117,6 +125,100 @@
     }
     .save-btn { background: #00aa50; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
     .cancel-btn { background: #cc2222; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+
+    /* Modales */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-content {
+        background-color: var(--bg-card);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        width: 90%;
+        max-width: 400px;
+        border-radius: 12px;
+        padding: 20px;
+        box-sizing: border-box;
+        position: relative;
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 10px;
+    }
+    .modal-title {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: white;
+        margin: 0;
+    }
+    .close-modal-btn {
+        background: transparent;
+        border: none;
+        color: #aaa;
+        font-size: 1.5em;
+        cursor: pointer;
+    }
+    .modal-body-list {
+        max-height: 250px;
+        overflow-y: auto;
+    }
+    
+    .user-list-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .user-info-side {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .user-list-avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid var(--accent);
+    }
+    .user-list-name {
+        font-size: 0.95em;
+        color: white;
+        font-weight: bold;
+    }
+    .remove-friend-btn {
+        background: #cc2222;
+        color: white;
+        border: none;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.8em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .remove-friend-btn:hover {
+        background: #e53935;
+    }
+    .empty-list-text {
+        color: #8a8ab0;
+        text-align: center;
+        padding: 20px 0;
+        font-style: italic;
+    }
 </style>
 {% endblock %}
 
@@ -147,15 +249,15 @@
             <h2 class="profile-username" id="display-username">Shinsoka</h2>
             <p class="profile-desc" id="display-desc">¡Hola! Estoy desarrollando mi frontend modular.</p>
             <div class="profile-stats">
-                <span><b>Amigos</b> 0</span>
-                <span><b>siguiendo</b> 0</span>
+                <span class="stat-link" onclick="openModal('friends-modal')"><b>Amigos</b> <span id="friends-count">2</span></span>
+                <span class="stat-link" onclick="openModal('following-modal')"><b>siguiendo</b> <span id="following-count">0</span></span>
             </div>
         </div>
     </div>
 
     <div class="favorites-section">
         <div class="favorites-title">Animes favoritos 0</div>
-        </div>
+    </div>
 
     <div class="favorites-section">
         <div class="favorites-title">Mangas favoritos 1</div>
@@ -165,10 +267,78 @@
     </div>
 
 </div>
+
+<div id="friends-modal" class="modal-overlay" onclick="closeModalOnOverlay(event, 'friends-modal')">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Amigos</h3>
+            <button class="close-modal-btn" onclick="closeModal('friends-modal')">&times;</button>
+        </div>
+        <div class="modal-body-list" id="friends-list-container">
+            </div>
+    </div>
+</div>
+
+<div id="following-modal" class="modal-overlay" onclick="closeModalOnOverlay(event, 'following-modal')">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Siguiendo</h3>
+            <button class="close-modal-btn" onclick="closeModal('following-modal')">&times;</button>
+        </div>
+        <div class="modal-body-list">
+            <div class="empty-list-text">No sigues a ningún usuario todavía.</div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
+    // Inicializar lista base si localStorage está vacío
+    if (!localStorage.getItem('profileFriendsList')) {
+        const defaultFriends = [
+            { name: "TheBoss", avatar: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=100" },
+            { name: "otaku_chile", avatar: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=100" }
+        ];
+        localStorage.setItem('profileFriendsList', JSON.stringify(defaultFriends));
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        renderFriends();
+    });
+
+    function renderFriends() {
+        const friends = JSON.parse(localStorage.getItem('profileFriendsList')) || [];
+        const container = document.getElementById('friends-list-container');
+        document.getElementById('friends-count').innerText = friends.length;
+
+        if (friends.length === 0) {
+            container.innerHTML = '<div class="empty-list-text">No tienes amigos agregados.</div>';
+            return;
+        }
+
+        container.innerHTML = friends.map((friend, index) => `
+            <div class="user-list-item">
+                <div class="user-info-side">
+                    <img src="${friend.avatar}" class="user-list-avatar" alt="Avatar">
+                    <span class="user-list-name">${friend.name}</span>
+                </div>
+                <button class="remove-friend-btn" onclick="removeFriend(${index})">Eliminar</button>
+            </div>
+        `).join('');
+    }
+
+    function removeFriend(index) {
+        const friends = JSON.parse(localStorage.getItem('profileFriendsList')) || [];
+        const removedUser = friends[index].name;
+        
+        friends.splice(index, 1);
+        localStorage.setItem('profileFriendsList', JSON.stringify(friends));
+        
+        renderFriends();
+        alert(`${removedUser} ha sido eliminado de tus amigos.`);
+    }
+
     function openEditForm() {
         document.getElementById('edit-form').style.display = 'block';
         document.getElementById('input-username').value = document.getElementById('display-username').innerText;
@@ -189,6 +359,23 @@
             closeEditForm();
         } else {
             alert("El nombre de usuario no puede estar vacío.");
+        }
+    }
+
+    function openModal(modalId) {
+        if(modalId === 'friends-modal') {
+            renderFriends(); // Re-renderizar para capturar los agregados desde el foro
+        }
+        document.getElementById(modalId).style.display = 'flex';
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    function closeModalOnOverlay(event, modalId) {
+        if (event.target === document.getElementById(modalId)) {
+            closeModal(modalId);
         }
     }
 </script>
