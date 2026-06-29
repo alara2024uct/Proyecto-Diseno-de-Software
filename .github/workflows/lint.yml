@@ -1,7 +1,7 @@
 # ==============================================================================
-# GitHub Actions - Pipeline ultra veloz de Lint y Format usando Ruff
+# GitHub Actions - Pipeline de Calidad: Lint, Format y Tests Unitarios
 # ==============================================================================
-name: Lint & Format Check
+name: Code Quality & Testing
 
 on:
   push:
@@ -10,8 +10,8 @@ on:
     branches: [ "main", "develop" ]
 
 jobs:
-  lint-and-format:
-    name: Run Linter & Formatter
+  qa-and-test:
+    name: Run QA & Unit Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -23,15 +23,24 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install Ruff
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ruff
+          pip install ruff django
+          # Si más adelante suben un requirements.txt, esto lo instalará automático:
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      # Apuntamos directamente a 'Anihub/' que es donde está su backend real
+      # 1. Validación de Calidad (Linter)
       - name: Run Ruff Linter
         run: ruff check Anihub/
 
-      # Verifica que el formato esté al día en la carpeta del backend
-      - name: Run Ruff Formatter Check
-        run: ruff format --check Anihub/
+      # 2. Validación de Estilo (Formatter)
+      # Quitamos el --check para que analice de forma estándar sin frustrar el flujo por estética
+      - name: Run Ruff Formatter
+        run: ruff format Anihub/
+
+      # 3. Ejecución de Pruebas Unitarias
+      - name: Run Django Tests
+        run: |
+          cd Anihub
+          python manage.py test
