@@ -88,14 +88,17 @@ class RegisterView(APIView):
             return Response({"message": "Usuario creado con éxito"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@token_required
 def home_view(request):
     """Catálogo principal de mangas"""
     return render(request, 'anihub_app/home.html')
 
+@token_required
 def movies_view(request):
     """Sección de videos y anime"""
     return render(request, 'anihub_app/movies.html')
 
+@token_required
 def watch_manga_view(request, manga_id):
     manga = get_object_or_404(Manga, id=manga_id)
     # Asegúrate de que manga.pages_urls sea un string que puedas dividir
@@ -105,26 +108,32 @@ def watch_manga_view(request, manga_id):
     print(f"DEBUG: Páginas encontradas: {paginas}") # Mira la consola del servidor
     return render(request, 'anihub_app/watch_manga.html', {'manga': manga, 'paginas': paginas})
 
+@token_required
 def forum_view(request):
     """Vista pública del foro comunitario"""
     return render(request, 'anihub_app/forum.html')
 
+@token_required
 def profile_view(request):
     """Perfil del usuario autenticado"""
     return render(request, 'anihub_app/profile.html')
 
+@token_required
 def chat_view(request):
     """Sala de chat privado"""
     return render(request, 'anihub_app/chat.html')
 
+@token_required
 def favorites_view(request):
     """Lista de favoritos guardados"""
     return render(request, 'anihub_app/favorites.html')
 
+@token_required
 def quiz_view(request):
     """Sección interactiva de trivia y quizzes"""
     return render(request, 'anihub_app/quiz.html')
 
+@token_required
 def news_view(request):
     """Noticias de actualidad sobre anime"""
     return render(request, 'anihub_app/news.html')

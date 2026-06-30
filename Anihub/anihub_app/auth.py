@@ -3,6 +3,7 @@ import time
 import jwt
 from functools import wraps
 from django.http import JsonResponse
+from django.shortcuts import redirect
 from .security import AESCipher
 from django.conf import settings
 
@@ -29,25 +30,29 @@ class AuthTokenService:
             return None # Token inválido
 
 def token_required(view_func):
+    @wraps(view_func)
     def wrapper(request, *args, **kwargs):
+        # --- A) Si es el navegador pidiendo una página (HTML), lo dejamos pasar ---
+        # El JS dentro de la página ya se encargará de validar el token después.
+        if 'text/html' in request.headers.get('Accept', ''):
+            return view_func(request, *args, **kwargs)
+
+        # --- B) Si es una petición API (JSON/Fetch), exigimos el token JWT ---
         auth_header = request.META.get('HTTP_AUTHORIZATION')
         
-        # 1. Limpieza del prefijo
-        if auth_header and auth_header.startswith('Token '):
-            token = auth_header.split(' ')[1]
-        else:
+        if not auth_header or not (auth_header.startswith('Token ') or auth_header.startswith('Bearer ')):
             return JsonResponse({'error': 'Formato inválido'}, status=401)
+        
+        token = auth_header.split(' ')[1]
 
         try:
-            # 2. INTENTO DE DECODIFICACIÓN
-            # Aquí es donde ocurre el fallo
-            data = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-            return view_func(request, *args, **kwargs)
-            
+            jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         except jwt.ExpiredSignatureError:
             return JsonResponse({'error': 'Token expirado'}, status=401)
         except jwt.InvalidTokenError:
             return JsonResponse({'error': 'Token inválido'}, status=401)
+
+        return view_func(request, *args, **kwargs)
             
     return wrapper
     
