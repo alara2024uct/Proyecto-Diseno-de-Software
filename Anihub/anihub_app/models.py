@@ -61,6 +61,12 @@ class Post(models.Model):
 
     def __str__(self):
         return f"Post by {self.author_pseudonym} at {self.created_at}"
+    
+
+# SUSPENDIDO
+class Comment(models.Model):
+    # Por ahora vacío, solo para que el servidor levante
+    pass
 
 # === NUEVOS MODELOS PARA EL CATÁLOGO LOCAL ===
 

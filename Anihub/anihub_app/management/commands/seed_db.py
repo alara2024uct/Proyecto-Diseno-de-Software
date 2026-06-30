@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from anihub_app.models import Post, Anime, Manga, Role
+from anihub_app.services.anime_adapter import JikanAdapter
 
 User = get_user_model()
 
@@ -138,4 +139,42 @@ class Command(BaseCommand):
             if created:
                 self.stdout.write(self.style.SUCCESS(f'Manga creado: {m_data["title"]}'))
 
+
+        # =====================================================================
+        # 6. INTEGRACIÓN DE MANGAS DESDE JIKAN API (VERSION CORREGIDA)
+        # =====================================================================
+        self.stdout.write(self.style.NOTICE('Importando catálogo de Jikan a la BD local...'))
+        adapter = JikanAdapter()
+        jikan_catalog = adapter.get_anime_catalog()
+
+        # Usamos una clave más genérica o aseguramos el título exacto
+        vinetas_personalizadas = {
+            "Frieren: Beyond Journey's End": "https://i.postimg.cc/BZxdL1Tz/Captura-de-pantalla-2026-06-29-193102.png,https://i.postimg.cc/sDsbpDKy/Captura-de-pantalla-2026-06-29-194058.png,https://i.postimg.cc/9XGvRqPD/Captura-de-pantalla-2026-06-29-194232.png"
+        }
+
+        for item in jikan_catalog:
+            titulo_jikan = item['title']
+            
+            # Buscar el manga en la BD usando búsqueda flexible (icontains)
+            # Esto evita que una diferencia de una letra rompa la lógica
+            manga_obj = Manga.objects.filter(title__icontains="Frieren").first() 
+            
+            # Si encontramos el manga (sea por título exacto o por el 'Frieren' que sabemos que existe)
+            if manga_obj:
+                paginas_nuevas = vinetas_personalizadas.get("Frieren: Beyond Journey's End")
+                manga_obj.pages_urls = paginas_nuevas
+                manga_obj.save()
+                self.stdout.write(self.style.SUCCESS(f'Actualizado manualmente páginas para: {manga_obj.title}'))
+            else:
+                # Si no existe, lo creamos normalmente
+                Manga.objects.get_or_create(
+                    title=titulo_jikan,
+                    defaults={
+                        "synopsis": item.get('synopsis', ''),
+                        "image_url": item.get('image_url', ''),
+                        "pages_urls": "https://picsum.photos/id/1/800/1200"
+                    }
+                )
+        
+        
         self.stdout.write(self.style.SUCCESS('¡Base de datos poblada con éxito! 🚀'))

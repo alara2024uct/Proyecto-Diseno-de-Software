@@ -2,10 +2,16 @@
 URL configuration for anihub_project project.
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from anihub_app import views  # Importación limpia y directa de las vistas de la app
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .views import RegisterView
+from rest_framework.routers import DefaultRouter
+from .views import RegisterView, MangaViewSet, AnimeViewSet, CommentViewSet
+
+router = DefaultRouter()
+router.register(r'api/mangas', MangaViewSet)
+router.register(r'api/animes', AnimeViewSet)
+router.register(r'api/comentarios', CommentViewSet)
 
 urlpatterns = [    
     # -----------------------------------------------------------------
@@ -40,4 +46,8 @@ urlpatterns = [
     path('api/auth/register/', RegisterView.as_view(), name='register_api'),
     path('api/catalog/', views.CatalogView.as_view(), name='api_catalog'),
     path('api/forum/post/', views.ForumView.as_view(), name='api_forum_post'),
+
+
+
+    path('', include(router.urls)),
 ]

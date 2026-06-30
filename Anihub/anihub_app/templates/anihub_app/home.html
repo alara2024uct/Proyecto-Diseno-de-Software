@@ -15,8 +15,6 @@
 <script>
     async function loadCatalog() {
         const token = localStorage.getItem('access_token');
-        console.log(token)
-
         try {
             const response = await fetch('/api/catalog/', {
                 method: 'GET',
@@ -26,21 +24,12 @@
                 }
             });
 
-            if (response.status === 401) {
-                throw new Error("Token inválido o expirado")
-            }
+            if (response.status === 401) throw new Error("Token inválido");
 
             const data = await response.json();
-            const mid = Math.ceil(data.catalog.length / 2);
-            renderItems(data.catalog.slice(0, mid), 'list-manga');
+            renderItems(data.catalog, 'list-manga');
         } catch (e) {
-            // Datos de respaldo simulados que coinciden con los IDs del Seeder si la API externa falla
-            const dummy = [
-                { id: 1, image_url: 'https://images.justwatch.com/poster/8575005/s332/berserk' },
-                { id: 2, image_url: 'https://covers.openlibrary.org/b/id/12711559-L.jpg' },
-                { id: 3, image_url: 'https://images.justwatch.com/poster/302302324/s332/monster-2004' }
-            ];
-            renderItems(dummy, 'list-manga');
+            console.error("Error:", e);
         }
     }
 
@@ -49,20 +38,31 @@
         if (!container) return;
         
         container.innerHTML = items.map(i => {
-            // Definimos un ID por defecto (1) si el item del catálogo no trae uno explícito
-            const mangaId = i.id || 1;
+            const mangaId = i.local_id;
+            // Definimos la lógica del click como una cadena de texto para el atributo onclick
+            // Nota: Solo pasamos el ID a una función global que definiremos abajo
+            const onClickAttr = mangaId ? `openManga(${mangaId})` : '';
+            const style = mangaId ? 'cursor:pointer;' : 'cursor:default; opacity: 0.6;';
             
-            // Construimos la URL dinámica apuntando a la estructura establecida en urls.py (/manga/read/ID/)
-            const targetUrl = `/manga/read/${mangaId}/`;
-
             return `
-                <div class="anime-card" onclick="window.location.href='${targetUrl}'" style="cursor:pointer;">
-                    <img src="${i.image_url}" onerror="this.src='https://via.placeholder.com/120x180'">
+                <div class="anime-card" 
+                    onclick="${onClickAttr}" 
+                    style="${style}">
+                    <img src="${i.image_url}" 
+                        alt="${i.title}" 
+                        onerror="this.src='https://via.placeholder.com/120x180'">
                 </div>
             `;
         }).join('');
     }
 
+    // DEFINES ESTA FUNCIÓN FUERA DE RENDERITEMS (en tu script global)
+    function openManga(id) {
+        console.log("Intentando abrir manga con ID:", id);
+        window.location.href = `/manga/read/${id}/`;
+    }
+
+    // Ejecutar al cargar
     loadCatalog();
 </script>
 {% endblock %}

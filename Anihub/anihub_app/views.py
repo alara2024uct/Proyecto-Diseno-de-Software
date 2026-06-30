@@ -8,11 +8,11 @@ from django.shortcuts import render, get_object_or_404
 from .auth import token_required
 from .services.anime_adapter import AnimeProvider, JikanAdapter
 from .services.anonymizer import AnonymizerService
-from .models import Post, Manga  # Se añaden Manga y Anime para las consultas locales
-from rest_framework import status
+from .models import Post, Manga, Anime, Comment  # Se añaden Manga y Anime para las consultas locales
+from rest_framework import status, viewsets, filters, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer, AnimeSerializer, MangaSerializer, CommentSerializer
 
 
 @method_decorator(token_required, name='dispatch')
@@ -24,8 +24,17 @@ class CatalogView(View):
         self.provider = provider or JikanAdapter()
 
     def get(self, request):
-        catalog = self.provider.get_anime_catalog()
-        return JsonResponse({"catalog": catalog}, status=200)
+            catalog = self.provider.get_anime_catalog()
+            
+            for item in catalog:
+                local_manga = Manga.objects.filter(title__iexact=item['title']).first()
+                
+                if local_manga:
+                    item['local_id'] = local_manga.id
+                else:
+                    item['local_id'] = None  # No está en tu BD
+                    
+            return JsonResponse({"catalog": catalog}, status=200)
 
 @method_decorator(csrf_exempt, name='dispatch')
 @method_decorator(token_required, name='dispatch')
@@ -88,18 +97,13 @@ def movies_view(request):
     return render(request, 'anihub_app/movies.html')
 
 def watch_manga_view(request, manga_id):
-    """Lector individual dinámico conectado con la Base de Datos"""
-    # Busca el manga por su ID; si no existe en Postgres, levanta un error 404
     manga = get_object_or_404(Manga, id=manga_id)
+    # Asegúrate de que manga.pages_urls sea un string que puedas dividir
+    # Si manga.pages_urls es "url1,url2,url3", el split(',') funcionará
+    paginas = manga.pages_urls.split(',') 
     
-    # Divide la cadena de texto con comas "url1,url2" en una lista real: ['url1', 'url2']
-    paginas_lista = manga.pages_urls.split(',') if manga.pages_urls else []
-    
-    context = {
-        'manga': manga,
-        'paginas': paginas_lista
-    }
-    return render(request, 'anihub_app/watch_manga.html', context)
+    print(f"DEBUG: Páginas encontradas: {paginas}") # Mira la consola del servidor
+    return render(request, 'anihub_app/watch_manga.html', {'manga': manga, 'paginas': paginas})
 
 def forum_view(request):
     """Vista pública del foro comunitario"""
@@ -124,3 +128,19 @@ def quiz_view(request):
 def news_view(request):
     """Noticias de actualidad sobre anime"""
     return render(request, 'anihub_app/news.html')
+
+class MangaViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Manga.objects.all()
+    serializer_class = MangaSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title'] # Endpoint: /api/mangas/?search=nombre
+
+class AnimeViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Anime.objects.all()
+    serializer_class = AnimeSerializer
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    # Solo el admin puede modificar comentarios, otros solo leer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
